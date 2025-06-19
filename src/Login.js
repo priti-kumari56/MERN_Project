@@ -1,63 +1,65 @@
 import React from 'react';
 import { useState } from 'react';
 
-function Login() {
+
+function Login({updateUserDetails}) {
+
     const [formData, setFormData]=useState({
         username:"",
         password:""
     });
+    const [errors, setErrors]=useState({});
+    const [message,setMessage]=useState(null);
 
-    const [errors,setErrors]=useState({});
-    const [message,setMessage] =useState(null);
-
-    const handleChange= (event) =>{
+    const handleChange=(event)=>{
         const name=event.target.name;
         const value=event.target.value;
 
-        console.log(name);
-        console.log(value);
-
         setFormData({
             ...formData,
-            [name]: value
+            [name]:value
         });
     };
-
-    const validate =() =>{
-        let newErrors= {};
-        let isValid = true;
-        if(formData.username.length === 0){
-            newErrors.username = "Username is mandatory";
-            isValid= false;
-    
+    const validate=()=>{
+        let newErrors={};
+        let isValid=true;
+        if(formData.username.length===0){
+            newErrors.username="Username is Mandatory";
+            isValid=false;
+            
         }
-        if(formData.password.length === 0){
-            newErrors.password ="Password is mandatory";
-            isValid =false;
+        if(formData.password.length===0){
+            newErrors.password="Password is Mandatory";
+            isValid=false;
+
         }
         setErrors(newErrors);
         return isValid;
     }
 
-
-    const handleSubmit =(event) =>{
+    const handleSubmit=(event)=>{
         event.preventDefault();
-
         if(validate()){
-        if(formData.username === 'admin' && formData.password==='admin'){
-            setMessage('Correct Credentials');
+            if(formData.username==='admin'&&formData.password==='admin'){
+                //User is authenticated and allowed to navigate
+                //assume we are calling rest endpoint and we are getting additional user details
+                setMessage('Correct Credentials');
+                //User is authenticated and allowed to navigate
+                updateUserDetails({
+                    name: 'Priti',
+                    email: 'priti@irani.com'
+                });
+                
+            }
+            else{
+                setMessage('Invalid Credentials');
+            }
         }
-        else{
-            setMessage('Invalid Credentials');
-        }
-    }
     };
-
-
   return (
     <div className="container text-center">
       <h1>Welcome to Login Page</h1>
-      {message && (
+      {message &&(
         message
       )}
       <form onSubmit={handleSubmit}>
@@ -67,15 +69,17 @@ function Login() {
             value={formData.username}
             onChange={handleChange}
             />
-            {errors.username && (errors.username)}
+            {errors.username &&(errors.username)}
         </div>
         <div>
             <label>Password:</label>
             <input type="password" name="password" 
             value={formData.password}
             onChange={handleChange}
+            
             />
-            {errors.password && (errors.password)}
+            {errors.password &&(errors.password)}
+            
         </div>
         <div>
             <button>Login</button>
